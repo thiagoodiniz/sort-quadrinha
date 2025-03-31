@@ -1,4 +1,21 @@
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.players-teams {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .teams-resume {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.teams-resume > div {
   display: flex;
   flex-direction: column;
   margin: 16px 0;
@@ -7,7 +24,6 @@
 .sort-container {
   display: flex;
   flex-direction: column;
-  margin-top: 32px;
 }
 
 .sort-container > div {
@@ -19,6 +35,10 @@
 .sort-container > div > div {
   display: flex;
   flex-direction: column;
+}
+
+.sort-container div.last-sorted > span {
+  font-size: 12px;
 }
 
 .sort-container > button {

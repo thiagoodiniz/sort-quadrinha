@@ -55,7 +55,7 @@ const TeamsDraw: React.FC = () => {
   
   return (
     <section>
-      <div>
+      <div className="players-teams">
         <div>
           <span>Número de jogadores</span>
           <Input 
@@ -87,15 +87,25 @@ const TeamsDraw: React.FC = () => {
       </div>
 
       <div className="teams-resume">
-        {teams.map((t) => 
-          <span>{t.numberOfPlayers}/{PLAYERS_BY_TEAMS} - {t.color}</span>
-        )}
+        <div>
+          {teams.map((t) => 
+            <span>{t.numberOfPlayers}/{PLAYERS_BY_TEAMS} - {t.color}</span>
+          )}
+        </div>
+
+        <div>
+          {sorteds
+            .filter((c, idx) => sorteds.indexOf(c) === idx)
+            .filter((_, idx) => idx < 5).map((color, idx) => 
+              <span className={color}>{`${idx + 1}º - ${color}`}</span>
+          )}
+        </div>
       </div>
 
       <div className="sort-container">
         <div>
           { sorteds.length > 1 && (
-            <div>
+            <div className="last-sorted">
               <span>último sorteado:</span>
               <span className={`sorted-column ${sorteds[sorteds.length - 2]}`}>{ sorteds[sorteds.length - 2] }</span>
             </div>
