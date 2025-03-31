@@ -1,0 +1,51 @@
+.teams-resume {
+  display: flex;
+  flex-direction: column;
+  margin: 16px 0;
+}
+
+.sort-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 32px;
+}
+
+.sort-container > div {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.sort-container > div > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.sort-container > button {
+  width: 100%;
+  height: 96px;
+}
+
+.sorted-column {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.Azul {
+  color: blue;
+}
+.Verde {
+  color: green;
+}
+.Preto {
+  color: black;
+}
+.Laranja {
+  color: orange;
+}
+.Vermelho {
+  color: red;
+}
+.Amarelo {
+  color: yellow;
+}

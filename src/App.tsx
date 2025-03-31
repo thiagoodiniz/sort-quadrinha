@@ -1,9 +1,10 @@
 import React from 'react';
+import TeamsDraw from './pages/TeamsDraw';
 
 function App() {
   return (
     <div className="App">
-        start
+      <TeamsDraw />
     </div>
   );
 }
