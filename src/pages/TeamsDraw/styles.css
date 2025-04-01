@@ -35,6 +35,9 @@ section {
 .sort-container > div > div {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-height: 210px;
 }
 
 .sort-container div.last-sorted > span {
@@ -49,6 +52,23 @@ section {
 .sorted-column {
   font-size: 22px;
   font-weight: bold;
+}
+
+.sorted-img {
+  height: 150px;
+}
+
+.animate-img {
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .Azul {

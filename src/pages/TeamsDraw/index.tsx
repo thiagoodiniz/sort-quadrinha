@@ -1,6 +1,7 @@
-import { Button, Checkbox, Input } from 'antd';
-import React, { useState } from 'react';
-import './styles.css';
+import { Button, Checkbox, Input } from 'antd'
+import React, { useEffect, useState } from 'react'
+import './styles.css'
+
 import azul from '../../assets/audios/azul.mp3'
 import verde from '../../assets/audios/verde.mp3'
 import preto from '../../assets/audios/preto.mp3'
@@ -8,16 +9,24 @@ import laranja from '../../assets/audios/laranja.mp3'
 import vermelho from '../../assets/audios/vermelho.mp3'
 import amarelo from '../../assets/audios/amarelo.mp3'
 
-type TColors = 'Azul' | 'Verde' | 'Preto' | 'Laranja' | 'Vermelho' | 'Amarelo'
+import azulColete from '../../assets/coletes-img/colete-azul.png'
+import verdeColete from '../../assets/coletes-img/colete-verde.png'
+import pretoColete from '../../assets/coletes-img/colete-preto.png'
+import laranjaColete from '../../assets/coletes-img/colete-laranja.png'
+import vermelhoColete from '../../assets/coletes-img/colete-vermelho.png'
+import amareloColete from '../../assets/coletes-img/colete-amarelo.png'
+
+type TColor = 'Azul' | 'Verde' | 'Preto' | 'Laranja' | 'Vermelho' | 'Amarelo'
 
 interface ITeam {
-  color: TColors
+  color: TColor
   numberOfPlayers: number
 }
 
 interface ITeamColorAudio {
-  color: TColors
+  color: TColor
   audioSrc: string
+  imgSrc: string
 }
 
 const TeamsDraw: React.FC = () => {
@@ -26,14 +35,15 @@ const TeamsDraw: React.FC = () => {
   const [numberMaxOfTeams, setNumberMaxOfTeams] = useState<number>()
 
   const teamColors: ITeamColorAudio[] = [
-    {color: 'Azul', audioSrc: azul },
-    {color: 'Verde', audioSrc: verde },
-    {color: 'Preto', audioSrc: preto },
-    {color: 'Laranja', audioSrc: laranja },
-    {color: 'Vermelho', audioSrc: vermelho },
-    {color: 'Amarelo', audioSrc: amarelo },
+    {color: 'Azul', audioSrc: azul, imgSrc: azulColete },
+    {color: 'Verde', audioSrc: verde, imgSrc: verdeColete },
+    {color: 'Preto', audioSrc: preto, imgSrc: pretoColete },
+    {color: 'Laranja', audioSrc: laranja, imgSrc: laranjaColete },
+    {color: 'Vermelho', audioSrc: vermelho, imgSrc: vermelhoColete },
+    {color: 'Amarelo', audioSrc: amarelo, imgSrc: amareloColete }
   ]
-  const [sorteds, setSorteds] = useState<string[]>([])
+  const [sorteds, setSorteds] = useState<TColor[]>([])
+  const [animate, setAnimate] = useState(false)
 
   const [teams, setTeams] = useState<ITeam[]>([])
 
@@ -43,7 +53,7 @@ const TeamsDraw: React.FC = () => {
     setTeams([])
   }
 
-  const onSelectTeamColor = (color: TColors) => {
+  const onSelectTeamColor = (color: TColor) => {
     let newTeams: ITeam[] = [...teams]
     const idx = teams.findIndex((t) => t.color === color)
     if (idx !== -1) {
@@ -57,10 +67,15 @@ const TeamsDraw: React.FC = () => {
     setTeams(newTeams)
   }
 
-  const playAudio = (color: TColors) => {
+  const playAudio = (color: TColor) => {
     const audioSrc = teamColors.find((tc) => tc.color === color)?.audioSrc
     const audio = new Audio(audioSrc)
     audio.play()
+  }
+
+  const getImg = (color: TColor) => {
+    const imgSrc = teamColors.find((tc) => tc.color === color)?.imgSrc
+    return imgSrc
   }
 
   const sortNew = () => {
@@ -72,13 +87,18 @@ const TeamsDraw: React.FC = () => {
 
     const sortedColor = availableColors[Math.floor(Math.random() * availableColors.length)]
     playAudio(sortedColor)
-    setSorteds((prev) => [...prev, sortedColor])
     setTeams((prevTeams) =>
       prevTeams.map((team) =>
         team.color === sortedColor ? { ...team, numberOfPlayers: team.numberOfPlayers + 1 } : team
       )
     )
+    setSorteds((prev) => [...prev, sortedColor])
   }
+
+  useEffect(() => {
+    setAnimate(false);
+    setTimeout(() => setAnimate(true), 100)
+  }, [teams]);
   
   return (
     <section>
@@ -105,6 +125,7 @@ const TeamsDraw: React.FC = () => {
         <div>
           {teamColors.map((tc) => 
             <Checkbox
+              key={tc.color}
               disabled={(numberMaxOfTeams === teams.length && !teams.find((t) => t.color === tc.color)) || !numberMaxOfTeams || sorteds.length > 0}
               onChange={() => onSelectTeamColor(tc.color)}
               checked={!!teams.find((t) => t.color === tc.color)}
@@ -116,7 +137,7 @@ const TeamsDraw: React.FC = () => {
       <div className="teams-resume">
         <div>
           {teams.map((t) => 
-            <span>{t.numberOfPlayers}/{PLAYERS_BY_TEAMS} - {t.color}</span>
+            <span key={t.color}>{t.numberOfPlayers}/{PLAYERS_BY_TEAMS} - {t.color}</span>
           )}
         </div>
 
@@ -124,7 +145,7 @@ const TeamsDraw: React.FC = () => {
           {sorteds
             .filter((c, idx) => sorteds.indexOf(c) === idx)
             .filter((_, idx) => idx < 5).map((color, idx) => 
-              <span className={color}>{`${idx + 1}º - ${color}`}</span>
+              <span key={color} className={color}>{`${idx + 1}º - ${color}`}</span>
           )}
         </div>
       </div>
@@ -141,6 +162,13 @@ const TeamsDraw: React.FC = () => {
           { sorteds.length > 0 && (
             <div>
               <span>Sorteado:</span>
+              { animate && (
+                  <img 
+                    alt="team color" 
+                    className="sorted-img animate-img" 
+                    src={getImg(sorteds[sorteds.length - 1])} key={sorteds[sorteds.length - 1]}/>
+                ) 
+              }
               <span className={`sorted-column ${sorteds[sorteds.length - 1]}`}>{ sorteds[sorteds.length - 1] }</span>
             </div>
           )}
