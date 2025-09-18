@@ -19,8 +19,12 @@ section {
   flex-wrap: wrap;
 }
 .choose-teams-container .ant-card {
-  width: 120px;
-  max-height: 140px;
+  flex: 1 1 calc(33.333% - 16px);
+  min-width: 100px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .choose-teams-container .ant-card-body {
