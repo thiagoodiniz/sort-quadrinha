@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Input } from 'antd'
+import { Button, Card } from 'antd'
 import React, { useEffect, useState } from 'react'
 import './styles.css'
 
@@ -8,8 +8,6 @@ import pretoColete from '../../assets/coletes-img/colete-preto.png'
 import laranjaColete from '../../assets/coletes-img/colete-laranja.png'
 import vermelhoColete from '../../assets/coletes-img/colete-vermelho.png'
 import amareloColete from '../../assets/coletes-img/colete-amarelo.png'
-import Meta from 'antd/es/card/Meta'
-import { CheckOutlined } from '@ant-design/icons'
 
 type TColor = 'Azul' | 'Verde' | 'Preto' | 'Laranja' | 'Vermelho' | 'Amarelo'
 
@@ -18,7 +16,7 @@ interface ITeam {
   numberOfPlayers: number
 }
 
-interface ITeamColorAudio {
+interface ITeamColor {
   color: TColor
   imgSrc: string
 }
@@ -35,7 +33,7 @@ interface ISavedLocalStorageSort {
 const TeamsDraw: React.FC = () => {
   const PLAYERS_BY_TEAMS = 5
 
-  const teamColors: ITeamColorAudio[] = [
+  const teamColors: ITeamColor[] = [
     {color: 'Azul', imgSrc: azulColete },
     {color: 'Verde', imgSrc: verdeColete },
     {color: 'Preto', imgSrc: pretoColete },
@@ -68,11 +66,13 @@ const TeamsDraw: React.FC = () => {
   }
 
   const sortNew = () => {
-    const availableColors = teams.filter((t) => t.numberOfPlayers < PLAYERS_BY_TEAMS).map((t) => t.color)
+    let availableColors: TColor[] = []
+    teams.forEach((t) => {
+      const missingPlayers = PLAYERS_BY_TEAMS - t.numberOfPlayers
+      availableColors.push(...Array(missingPlayers).fill(t.color));
+    })
+    availableColors = availableColors.sort(() => Math.random() - 0.5);
 
-    if (availableColors.length === 0) {
-      return
-    }
 
     const sortedColor = availableColors[Math.floor(Math.random() * availableColors.length)]
 
