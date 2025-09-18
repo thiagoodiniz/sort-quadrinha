@@ -3,4 +3,5 @@ body {
   height: 95vh;
   margin: auto;
   padding: 16px;
+  background: linear-gradient(0deg, rgba(55, 119, 188, .05), rgba(55, 119, 188, .05)), #FFFFFF;
 }

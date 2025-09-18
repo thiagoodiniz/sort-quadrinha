@@ -2,13 +2,6 @@ import { Button, Checkbox, Input } from 'antd'
 import React, { useEffect, useState } from 'react'
 import './styles.css'
 
-import azul from '../../assets/audios/azul.mp3'
-import verde from '../../assets/audios/verde.mp3'
-import preto from '../../assets/audios/preto.mp3'
-import laranja from '../../assets/audios/laranja.mp3'
-import vermelho from '../../assets/audios/vermelho.mp3'
-import amarelo from '../../assets/audios/amarelo.mp3'
-
 import azulColete from '../../assets/coletes-img/colete-azul.png'
 import verdeColete from '../../assets/coletes-img/colete-verde.png'
 import pretoColete from '../../assets/coletes-img/colete-preto.png'
@@ -25,8 +18,16 @@ interface ITeam {
 
 interface ITeamColorAudio {
   color: TColor
-  audioSrc: string
   imgSrc: string
+}
+
+const CURRENT_SORT = '@sort-quadrinha/sort'
+
+interface ISavedLocalStorageSort {
+  numberOfPlayers?: number
+  numberMaxOfTeams?: number
+  teams: ITeam[]
+  sorteds: TColor[]
 }
 
 const TeamsDraw: React.FC = () => {
@@ -35,12 +36,12 @@ const TeamsDraw: React.FC = () => {
   const [numberMaxOfTeams, setNumberMaxOfTeams] = useState<number>()
 
   const teamColors: ITeamColorAudio[] = [
-    {color: 'Azul', audioSrc: azul, imgSrc: azulColete },
-    {color: 'Verde', audioSrc: verde, imgSrc: verdeColete },
-    {color: 'Preto', audioSrc: preto, imgSrc: pretoColete },
-    {color: 'Laranja', audioSrc: laranja, imgSrc: laranjaColete },
-    {color: 'Vermelho', audioSrc: vermelho, imgSrc: vermelhoColete },
-    {color: 'Amarelo', audioSrc: amarelo, imgSrc: amareloColete }
+    {color: 'Azul', imgSrc: azulColete },
+    {color: 'Verde', imgSrc: verdeColete },
+    {color: 'Preto', imgSrc: pretoColete },
+    {color: 'Laranja', imgSrc: laranjaColete },
+    {color: 'Vermelho', imgSrc: vermelhoColete },
+    {color: 'Amarelo', imgSrc: amareloColete }
   ]
   const [sorteds, setSorteds] = useState<TColor[]>([])
   const [animate, setAnimate] = useState(false)
@@ -67,12 +68,6 @@ const TeamsDraw: React.FC = () => {
     setTeams(newTeams)
   }
 
-  const playAudio = (color: TColor) => {
-    const audioSrc = teamColors.find((tc) => tc.color === color)?.audioSrc
-    const audio = new Audio(audioSrc)
-    audio.play()
-  }
-
   const getImg = (color: TColor) => {
     const imgSrc = teamColors.find((tc) => tc.color === color)?.imgSrc
     return imgSrc
@@ -86,23 +81,66 @@ const TeamsDraw: React.FC = () => {
     }
 
     const sortedColor = availableColors[Math.floor(Math.random() * availableColors.length)]
-    playAudio(sortedColor)
+
+    setSorteds((prev) => [...prev, sortedColor])
     setTeams((prevTeams) =>
       prevTeams.map((team) =>
         team.color === sortedColor ? { ...team, numberOfPlayers: team.numberOfPlayers + 1 } : team
       )
     )
-    setSorteds((prev) => [...prev, sortedColor])
+  }
+
+  const saveLocalStorage = () => {
+    const data: ISavedLocalStorageSort = {
+      numberMaxOfTeams,
+      numberOfPlayers,
+      sorteds,
+      teams
+    }
+
+    localStorage.setItem(CURRENT_SORT, JSON.stringify(data))
+  }
+
+  const initLocalStoredSorted = () => {
+    const data = localStorage.getItem(CURRENT_SORT)
+    const sorted = data ? JSON.parse(data) as ISavedLocalStorageSort : null
+    if (sorted) {
+      setNumberMaxOfTeams(sorted.numberMaxOfTeams)
+      setNumberOfPlayers(sorted.numberOfPlayers)
+      setTeams(sorted.teams)
+      setSorteds(sorted.sorteds)
+    }
+  }
+
+  const onResetClick = () => {
+    setNumberMaxOfTeams(undefined)
+    setNumberOfPlayers(undefined)
+    setTeams([])
+    setSorteds([])
   }
 
   useEffect(() => {
-    setAnimate(false);
-    setTimeout(() => setAnimate(true), 100)
+    if (teams.length) {
+      setAnimate(false);
+      setTimeout(() => setAnimate(true), 100)
+      saveLocalStorage()
+    }
   }, [teams]);
+
+  useEffect(() => {
+    initLocalStoredSorted()
+  }, []);
   
   return (
     <section>
       <div className="players-teams">
+        {sorteds.length > 0 && (
+          <Button
+            size='small'
+            type='primary'
+            onClick={onResetClick}
+          >Novo sorteio</Button>
+        )}
         <div>
           <span>Número de jogadores</span>
           <Input 
@@ -111,7 +149,6 @@ const TeamsDraw: React.FC = () => {
             onChange={(e) => onChangeNumberOfPlayers(Number(e.target.value))}
             placeholder='Digite o número de jogadores'
             type='number'
-            max={30}
           />
         </div>
         <div>
@@ -137,14 +174,14 @@ const TeamsDraw: React.FC = () => {
       <div className="teams-resume">
         <div>
           {teams.map((t) => 
-            <span key={t.color}>{t.numberOfPlayers}/{PLAYERS_BY_TEAMS} - {t.color}</span>
+            <span key={t.color} className={t.color}>{t.numberOfPlayers}/{PLAYERS_BY_TEAMS} - {t.color}</span>
           )}
         </div>
 
         <div>
           {sorteds
             .filter((c, idx) => sorteds.indexOf(c) === idx)
-            .filter((_, idx) => idx < 5).map((color, idx) => 
+            .filter((_, idx) => idx < (numberMaxOfTeams ?? 0)).map((color, idx) => 
               <span key={color} className={color}>{`${idx + 1}º - ${color}`}</span>
           )}
         </div>
