@@ -2,12 +2,32 @@ section {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  height: 90vh;
 }
 
 .players-teams {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.choose-teams-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.choose-teams-container .ant-card {
+  width: 120px;
+  max-height: 140px;
+}
+
+.choose-teams-container .ant-card-body {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .teams-resume {
@@ -24,6 +44,7 @@ section {
 .sort-container {
   display: flex;
   flex-direction: column;
+  margin-top: auto;
 }
 
 .sort-container > div {
@@ -46,7 +67,7 @@ section {
 
 .sort-container > button {
   width: 100%;
-  height: 96px;
+  height: 30vh;
 }
 
 .sorted-column {

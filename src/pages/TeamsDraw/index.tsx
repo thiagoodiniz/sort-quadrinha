@@ -1,4 +1,4 @@
-import { Button, Checkbox, Input } from 'antd'
+import { Button, Card, Checkbox, Input } from 'antd'
 import React, { useEffect, useState } from 'react'
 import './styles.css'
 
@@ -8,6 +8,8 @@ import pretoColete from '../../assets/coletes-img/colete-preto.png'
 import laranjaColete from '../../assets/coletes-img/colete-laranja.png'
 import vermelhoColete from '../../assets/coletes-img/colete-vermelho.png'
 import amareloColete from '../../assets/coletes-img/colete-amarelo.png'
+import Meta from 'antd/es/card/Meta'
+import { CheckOutlined } from '@ant-design/icons'
 
 type TColor = 'Azul' | 'Verde' | 'Preto' | 'Laranja' | 'Vermelho' | 'Amarelo'
 
@@ -32,8 +34,6 @@ interface ISavedLocalStorageSort {
 
 const TeamsDraw: React.FC = () => {
   const PLAYERS_BY_TEAMS = 5
-  const [numberOfPlayers, setNumberOfPlayers] = useState<number>()
-  const [numberMaxOfTeams, setNumberMaxOfTeams] = useState<number>()
 
   const teamColors: ITeamColorAudio[] = [
     {color: 'Azul', imgSrc: azulColete },
@@ -47,12 +47,6 @@ const TeamsDraw: React.FC = () => {
   const [animate, setAnimate] = useState(false)
 
   const [teams, setTeams] = useState<ITeam[]>([])
-
-  const onChangeNumberOfPlayers = (players: number) => {
-    setNumberOfPlayers(players)
-    setNumberMaxOfTeams(Math.ceil(players / PLAYERS_BY_TEAMS))
-    setTeams([])
-  }
 
   const onSelectTeamColor = (color: TColor) => {
     let newTeams: ITeam[] = [...teams]
@@ -92,8 +86,6 @@ const TeamsDraw: React.FC = () => {
 
   const saveLocalStorage = () => {
     const data: ISavedLocalStorageSort = {
-      numberMaxOfTeams,
-      numberOfPlayers,
       sorteds,
       teams
     }
@@ -105,16 +97,12 @@ const TeamsDraw: React.FC = () => {
     const data = localStorage.getItem(CURRENT_SORT)
     const sorted = data ? JSON.parse(data) as ISavedLocalStorageSort : null
     if (sorted) {
-      setNumberMaxOfTeams(sorted.numberMaxOfTeams)
-      setNumberOfPlayers(sorted.numberOfPlayers)
       setTeams(sorted.teams)
       setSorteds(sorted.sorteds)
     }
   }
 
   const onResetClick = () => {
-    setNumberMaxOfTeams(undefined)
-    setNumberOfPlayers(undefined)
     setTeams([])
     setSorteds([])
   }
@@ -141,35 +129,30 @@ const TeamsDraw: React.FC = () => {
             onClick={onResetClick}
           >Novo sorteio</Button>
         )}
-        <div>
-          <span>Número de jogadores</span>
-          <Input 
-            value={numberOfPlayers}
-            disabled={sorteds.length > 0}
-            onChange={(e) => onChangeNumberOfPlayers(Number(e.target.value))}
-            placeholder='Digite o número de jogadores'
-            type='number'
-          />
-        </div>
-        <div>
-          <span>Número de times</span>
-          <Input placeholder='Digite o número de jogadores' value={numberMaxOfTeams} disabled />
-        </div>
       </div>
 
-      <div>
-        <span>Escolha as cores:</span>
-        <div>
-          {teamColors.map((tc) => 
-            <Checkbox
-              key={tc.color}
-              disabled={(numberMaxOfTeams === teams.length && !teams.find((t) => t.color === tc.color)) || !numberMaxOfTeams || sorteds.length > 0}
-              onChange={() => onSelectTeamColor(tc.color)}
-              checked={!!teams.find((t) => t.color === tc.color)}
-            >{tc.color}</Checkbox>
-          )}
-        </div>
-      </div>
+        {sorteds.length === 0 && (
+          <div>
+            <span>Escolha as cores:</span>
+            <div className="choose-teams-container">
+              {teamColors.map((tc) => 
+                <Card
+                  key={tc.color}
+                  onClick={() =>  onSelectTeamColor(tc.color)}
+                  style={{ opacity: teams.find((t) => t.color === tc.color) ? 1 : 0.35 }}
+                >
+                  <img
+                    style={{ height: 48 }}
+                    draggable={false}
+                    alt="example"
+                    src={tc.imgSrc}
+                  />
+                  <span className={tc.color}>{tc.color}</span>
+                </Card>
+              )}
+            </div>
+          </div>
+        )}
 
       <div className="teams-resume">
         <div>
@@ -181,7 +164,7 @@ const TeamsDraw: React.FC = () => {
         <div>
           {sorteds
             .filter((c, idx) => sorteds.indexOf(c) === idx)
-            .filter((_, idx) => idx < (numberMaxOfTeams ?? 0)).map((color, idx) => 
+            .map((color, idx) => 
               <span key={color} className={color}>{`${idx + 1}º - ${color}`}</span>
           )}
         </div>
@@ -211,12 +194,14 @@ const TeamsDraw: React.FC = () => {
           )}
         </div>
 
-        <Button
-          size='large'
-          type='primary'
-          disabled={sorteds.length === (teams.length * PLAYERS_BY_TEAMS)}
-          onClick={sortNew}
-        >Sortear</Button>
+        {teams.length > 1 && (
+          <Button
+            size='large'
+            type='primary'
+            disabled={sorteds.length === (teams.length * PLAYERS_BY_TEAMS)}
+            onClick={sortNew}
+          >Sortear</Button>
+        )}
       </div>
     </section>
   )
