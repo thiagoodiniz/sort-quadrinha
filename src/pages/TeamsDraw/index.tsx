@@ -140,6 +140,7 @@ const TeamsDraw: React.FC = () => {
                   key={tc.color}
                   onClick={() =>  onSelectTeamColor(tc.color)}
                   style={{ opacity: teams.find((t) => t.color === tc.color) ? 1 : 0.35 }}
+                  hoverable
                 >
                   <img
                     style={{ height: 48 }}
