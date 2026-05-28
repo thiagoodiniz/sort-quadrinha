@@ -1,12 +1,13 @@
 import React from 'react';
+import { App } from 'antd';
 import TeamsDraw from './pages/TeamsDraw';
 
-function App() {
+function AppRoot() {
   return (
-    <div className="App">
+    <App>
       <TeamsDraw />
-    </div>
+    </App>
   );
 }
 
-export default App;
+export default AppRoot;
