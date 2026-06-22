@@ -8,8 +8,9 @@ import pretoColete from '../../assets/coletes-img/colete-preto.png'
 import laranjaColete from '../../assets/coletes-img/colete-laranja.png'
 import vermelhoColete from '../../assets/coletes-img/colete-vermelho.png'
 import amareloColete from '../../assets/coletes-img/colete-amarelo.png'
+import rosaColete from '../../assets/coletes-img/colete-rosa.png'
 
-type TColor = 'Azul' | 'Verde' | 'Preto' | 'Laranja' | 'Vermelho' | 'Amarelo'
+type TColor = 'Azul' | 'Verde' | 'Preto' | 'Laranja' | 'Vermelho' | 'Amarelo' | 'Rosa'
 
 interface ITeam {
   color: TColor
@@ -38,6 +39,7 @@ const TeamsDraw: React.FC = () => {
     { color: 'Laranja', imgSrc: laranjaColete },
     { color: 'Vermelho', imgSrc: vermelhoColete },
     { color: 'Amarelo', imgSrc: amareloColete },
+    { color: 'Rosa', imgSrc: rosaColete },
   ]
 
   const [sorteds, setSorteds] = useState<TColor[]>([])
